@@ -1,1 +1,1 @@
-# Angles and Devils
+# CrewCo Plugin Template 1.20.x
