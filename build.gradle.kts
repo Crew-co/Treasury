@@ -1,9 +1,9 @@
 plugins {
 	java
-	id("org.jetbrains.kotlin.jvm") version "1.7.22"
-	id("net.minecrell.plugin-yml.bukkit") version "0.5.2"
+	id("org.jetbrains.kotlin.jvm") version "2.0.21"
+	id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
 	id("com.github.johnrengelman.shadow") version "7.1.2"
-	id("io.papermc.paperweight.userdev") version "1.3.11"
+	id("io.papermc.paperweight.userdev") version "1.7.4"
 	id("xyz.jpenilla.run-paper") version "2.0.0"
 }
 
@@ -72,7 +72,7 @@ repositories {
 
 dependencies {
 	// Paper
-	paperDevBundle(paper_version)
+	paperweight.paperDevBundle(paper_version)
 	compileOnly("io.papermc.paper:paper-api:$paper_version")
 
 
@@ -82,15 +82,20 @@ dependencies {
 	//MySQL
 	implementation("mysql:mysql-connector-java:8.0.28")
 
-
+/*
 	// Kotlin
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.22")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
+*/
+	// Kotlin
+	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.7.3")
 
 	// Kotlin Coroutine for Bukkit
-	implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.7.0")
-	implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.7.0")
+	implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.20.0")
+	implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.20.0")
 
 	// Dependency Injection
 	implementation("com.google.inject:guice:5.1.0")
@@ -115,8 +120,8 @@ dependencies {
 	implementation("net.kyori:adventure-extra-kotlin:4.12.0")
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_18
-java.targetCompatibility = JavaVersion.VERSION_18
+java.sourceCompatibility = JavaVersion.VERSION_22
+java.targetCompatibility = JavaVersion.VERSION_22
 
 tasks {
 	assemble {
@@ -136,7 +141,7 @@ tasks {
 
 	compileKotlin {
 		kotlinOptions {
-			jvmTarget = "18"
+			jvmTarget = "22"
 		}
 	}
 
@@ -161,5 +166,4 @@ bukkit {
 	authors = listOf("CrewCo Team", *project_owners.split(",").toTypedArray())
 	main = "$project_package.$project_plugin_class"
 	apiVersion = "1.20"
-	//depend = listOf("LuckPerms")
 }

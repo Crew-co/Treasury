@@ -4,10 +4,14 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Angels_and_Devils.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Angels_and_Devils.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Angels_and_Devils.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Angels_and_Devils.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/CrewCoPlugin-Template-1.17.x-1.21.x.TemplatePlugin1.20.x.main.iml" filepath="$PROJECT_DIR$/.idea/modules/CrewCoPlugin-Template-1.17.x-1.21.x.TemplatePlugin1.20.x.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/CrewCoPlugin-Template-1.17.x-1.21.x.TemplatePlugin1.20.x.test.iml" filepath="$PROJECT_DIR$/.idea/modules/CrewCoPlugin-Template-1.17.x-1.21.x.TemplatePlugin1.20.x.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/CrewCoTemplate.main.iml" filepath="$PROJECT_DIR$/.idea/modules/CrewCoTemplate.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/CrewCoTemplate.test.iml" filepath="$PROJECT_DIR$/.idea/modules/CrewCoTemplate.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/TemplatePlugin1.20.x.main.iml" filepath="$PROJECT_DIR$/.idea/modules/TemplatePlugin1.20.x.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/TemplatePlugin1.20.x.test.iml" filepath="$PROJECT_DIR$/.idea/modules/TemplatePlugin1.20.x.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/net.crewco.Template.TemplatePlugin1.20.x.main.iml" filepath="$PROJECT_DIR$/.idea/modules/net.crewco.Template.TemplatePlugin1.20.x.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/net.crewco.Template.TemplatePlugin1.20.x.test.iml" filepath="$PROJECT_DIR$/.idea/modules/net.crewco.Template.TemplatePlugin1.20.x.test.iml" />
     </modules>
   </component>
 </project>
