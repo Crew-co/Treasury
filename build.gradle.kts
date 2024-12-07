@@ -105,15 +105,15 @@ dependencies {
 	implementation("com.github.jasync-sql:jasync-mysql:2.1.7")
 
 	// Command Framework
-	implementation("cloud.commandframework:cloud-paper:1.8.0")
-	implementation("cloud.commandframework:cloud-bukkit:1.8.0")
+	implementation("org.incendo:cloud-paper:2.0.0-beta.10")
+	implementation("org.incendo:cloud-bukkit:2.0.0-beta.10")
 
-	implementation("cloud.commandframework:cloud-annotations:1.8.0")
-	implementation("cloud.commandframework:cloud-minecraft-extras:1.8.0")
-	implementation("cloud.commandframework:cloud-kotlin-coroutines:1.8.0")
-	implementation("cloud.commandframework:cloud-kotlin-coroutines-annotations:1.8.0")
-	implementation("cloud.commandframework:cloud-kotlin-extensions:1.8.0")
-	annotationProcessor("cloud.commandframework:cloud-annotations:1.8.0")
+	implementation("org.incendo:cloud-annotations:2.0.0")
+	implementation("org.incendo:cloud-minecraft-extras:2.0.0-beta.10")
+	implementation("org.incendo:cloud-kotlin-coroutines:2.0.0")
+	implementation("org.incendo:cloud-kotlin-coroutines-annotations:2.0.0")
+	implementation("org.incendo:cloud-kotlin-extensions:2.0.0")
+	annotationProcessor("org.incendo:cloud-annotations:2.0.0")
 
 	// Adventure
 	implementation("net.kyori:adventure-platform-bukkit:4.2.0")
