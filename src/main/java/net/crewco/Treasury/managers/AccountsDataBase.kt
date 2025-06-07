@@ -4,8 +4,6 @@ package net.crewco.Treasury.managers
 import java.io.File
 import java.sql.Connection
 import java.sql.DriverManager
-import java.sql.PreparedStatement
-import java.sql.ResultSet
 import java.util.UUID
 
 class AccountsDataBase(private val dbPath: File) {
