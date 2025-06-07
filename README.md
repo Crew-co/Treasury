@@ -1,1 +1,1 @@
-# CrewCo Plugin Template 1.20.x
+# US(W) Treasy Plugin as well as Economy Plugin with Vault Support
