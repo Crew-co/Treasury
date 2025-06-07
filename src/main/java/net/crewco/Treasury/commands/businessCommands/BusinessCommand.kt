@@ -179,7 +179,7 @@ class BusinessCommand @Inject constructor(private val plugin:Startup) {
 				} else {
 					player.sendMessage("${sysMsg}Businesses:")
 					businesses.forEach {
-						player.sendMessage(" §e${it.id}§7: §f${it.name} (§a$${it.balance}§f)")
+						player.sendMessage("§f${it.name}: (§a$${it.balance}§f)")
 					}
 				}
 			}

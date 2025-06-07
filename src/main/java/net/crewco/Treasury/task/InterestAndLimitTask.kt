@@ -1,12 +1,13 @@
 package net.crewco.Treasury.task
 
+import com.google.inject.Inject
 import net.crewco.Treasury.Startup
 import net.crewco.Treasury.Startup.Companion.bankManager
 import net.crewco.Treasury.Startup.Companion.businessManager
 import net.crewco.Treasury.Startup.Companion.interestCap
 import net.crewco.Treasury.Startup.Companion.interestRate
 
-class InterestAndLimitTask(private val plugin: Startup) : Runnable {
+class InterestAndLimitTask @Inject constructor(private val plugin: Startup) : Runnable {
 	override fun run() {
 		val now = System.currentTimeMillis()
 
