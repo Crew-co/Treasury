@@ -10,7 +10,7 @@ import org.incendo.cloud.annotations.Permission
 
 class ReloadCommand @Inject constructor(private val plugin:Startup) {
 
-	@Command("treasury reload")
+	@Command("treasury-reload")
 	@Permission("treasury.reload")
 	fun reloadConfig(sender: Player) {
 		plugin.reloadConfigFiles()

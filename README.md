@@ -22,6 +22,11 @@
 - /business delete [id]
 ------------
 #### Admin Commands
+
+##### /treasury-reload
+Does exactly what you think it does
+------------
+
 ##### /walletAdmin
 - /walletAdmin set [player] [amount]
 - /walletAdmin give [player] [amount]
