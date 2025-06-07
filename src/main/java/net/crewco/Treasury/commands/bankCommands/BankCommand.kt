@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import net.crewco.Treasury.Startup
 import net.crewco.Treasury.Startup.Companion.accountManager
 import net.crewco.Treasury.Startup.Companion.bankManager
+import net.crewco.Treasury.Startup.Companion.sysMsg
 import org.bukkit.entity.Player
 import org.incendo.cloud.annotations.Argument
 import org.incendo.cloud.annotations.Command
@@ -20,41 +21,41 @@ class BankCommand @Inject constructor(private val plugin:Startup) {
 		val wallet = accountManager
 
 		if (args.isEmpty()){
-			player.sendMessage("§e/bank deposit <amount>, /bank withdraw <amount>, /bank bal")
+			player.sendMessage("$sysMsg/bank deposit <amount>, /bank withdraw <amount>, /bank bal")
 			return
 		}
 		when (args[0].lowercase()){
 			"bal" -> {
-				player.sendMessage("§aBank balance: §6${"%.2f".format(bank.balance)}")
+				player.sendMessage("${sysMsg}Bank balance: §6${"%.2f".format(bank.balance)}")
 			}
 			"deposit" -> {
 				val amount = args.getOrNull(1)?.toDoubleOrNull()
 				if (amount == null || amount <= 0) {
-					player.sendMessage("§cInvalid amount.")
+					player.sendMessage("${sysMsg}Invalid amount.")
 					return
 				}
 				if (wallet.withdraw(player.uniqueId, amount)) {
 					bankManager.deposit(player.uniqueId, amount)
-					player.sendMessage("§aDeposited §6$amount §ato your bank.")
+					player.sendMessage("${sysMsg}Deposited §6$amount §ato your bank.")
 				} else {
-					player.sendMessage("§cNot enough in wallet.")
+					player.sendMessage("${sysMsg}Not enough in wallet.")
 				}
 			}
 			"withdraw" -> {
 				val amount = args.getOrNull(1)?.toDoubleOrNull()
 				if (amount == null || amount <= 0) {
-					player.sendMessage("§cInvalid amount.")
+					player.sendMessage("${sysMsg}Invalid amount.")
 					return
 				}
 				if (bankManager.withdraw(player.uniqueId, amount)) {
 					wallet.deposit(player.uniqueId, amount)
-					player.sendMessage("§aWithdrew §6$amount §afrom your bank.")
+					player.sendMessage("${sysMsg}Withdrew §6$amount §afrom your bank.")
 				} else {
-					player.sendMessage("§cNot enough in bank.")
+					player.sendMessage("${sysMsg}Not enough in bank.")
 				}
 			}
 
-			else -> player.sendMessage("§e/bank deposit <amount>, /bank withdraw <amount>, /bank bal")
+			else -> player.sendMessage("${sysMsg}/bank deposit <amount>, /bank withdraw <amount>, /bank bal")
 		}
 	}
 

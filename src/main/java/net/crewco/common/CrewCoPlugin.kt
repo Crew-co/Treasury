@@ -71,7 +71,7 @@ abstract class CrewCoPlugin : SuspendingJavaPlugin() {
 				{ component ->
 					text()
 						.append(text("[", NamedTextColor.DARK_GRAY))
-						.append(text("Example", NamedTextColor.GOLD))
+						.append(text("System", NamedTextColor.GOLD))
 						.append(text("] ", NamedTextColor.DARK_GRAY))
 						.append(component).build()
 				}

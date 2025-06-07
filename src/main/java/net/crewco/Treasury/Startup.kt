@@ -6,6 +6,7 @@ import net.crewco.Treasury.commands.businessCommands.BusinessAdminCommand
 import net.crewco.Treasury.commands.businessCommands.BusinessCommand
 import net.crewco.Treasury.commands.playerWalletCommands.walletAdminCommand
 import net.crewco.Treasury.commands.playerWalletCommands.walletCommand
+import net.crewco.Treasury.commands.pluginCommands.ReloadCommand
 import net.crewco.Treasury.hooks.VaultBankEconomy
 import net.crewco.Treasury.hooks.VaultEconomyProvider
 import net.crewco.Treasury.managers.AccountManager
@@ -20,6 +21,8 @@ import net.crewco.Treasury.task.InterestAndLimitTask
 import net.crewco.common.CrewCoPlugin
 import net.milkbowl.vault2.economy.Economy
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.ServicePriority
 import java.io.File
 import kotlin.properties.Delegates
@@ -40,6 +43,8 @@ class Startup : CrewCoPlugin() {
 		var interestCap by Delegates.notNull<Double>()
 		var withdrawLimit by Delegates.notNull<Double>()
 		lateinit var accountsDataBase: AccountsDataBase
+		lateinit var messagesConfig: YamlConfiguration
+		lateinit var sysMsg:String
 	}
 
 	private lateinit var econ: Economy;
@@ -104,7 +109,7 @@ class Startup : CrewCoPlugin() {
 		interestCap = config.getDouble("interest.business-cap")
 		withdrawLimit = config.getDouble("withdraw.daily-limit")
 
-		registerCommands(walletCommand::class, BankCommand::class, BankAdminCommand::class,walletAdminCommand::class,BusinessCommand::class,BusinessAdminCommand::class)
+		registerCommands(walletCommand::class, BankCommand::class, BankAdminCommand::class,walletAdminCommand::class,BusinessCommand::class,BusinessAdminCommand::class,ReloadCommand::class)
 
 
 		// Register Vault Hooks
@@ -145,9 +150,17 @@ class Startup : CrewCoPlugin() {
 		econ = rsp.provider
 		return true
 	}
+	fun reloadConfigFiles() {
+		saveConfig()
+		reloadConfig()
 
-	fun getEconomy():Economy{
-		return econ
+		// If using additional configs like messages.yml
+		val messagesFile = File(dataFolder, "messages.yml")
+		if (!messagesFile.exists()) saveResource("messages.yml", false)
+		messagesConfig = YamlConfiguration.loadConfiguration(messagesFile)
+
+		sysMsg = ChatColor.translateAlternateColorCodes('&', messagesConfig.getString("system-message")!!)
+
+		logger.info("Treasury config files reloaded.")
 	}
-
 }

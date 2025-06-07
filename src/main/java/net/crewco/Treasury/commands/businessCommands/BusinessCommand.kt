@@ -7,12 +7,14 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.incendo.cloud.annotations.Argument
 import org.incendo.cloud.annotations.Command
+import org.incendo.cloud.annotations.Permission
 import org.incendo.cloud.annotations.suggestion.Suggestions
 import org.incendo.cloud.context.CommandContext
 import java.util.stream.Stream
 
 class BusinessCommand {
 	@Command("business <args>")
+	@Permission("treasury.business.use")
 	fun onExecute(player:Player, @Argument("args", suggestions = "args") args:Array<String>){
 
 		when (args.getOrNull(0)?.lowercase()) {
