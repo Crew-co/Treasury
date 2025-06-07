@@ -40,4 +40,8 @@ class AccountManager(private val databaseManager: DatabaseManager) {
 	fun addWithdrawnToday(uuid:UUID,ammout:Double){
 		return databaseManager.addWithdrawnToday(uuid,ammout)
 	}
+
+	fun getAccount(uuid:UUID): Account? {
+		return databaseManager.getAccount(uuid)
+	}
 }

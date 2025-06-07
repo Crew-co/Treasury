@@ -37,6 +37,7 @@ Does exactly what you think it does
 - /bankAdmin bal
 - /bankAdmin give [player] [amount]
 - /bankAdmin set [player] [amount]
+- /bankAdmin note [amount] [issuer]
 ------------
 ##### /businessAdmin
 Same as the normal business commands but can bypass safe guards normal players cant
@@ -55,7 +56,7 @@ withdraw:
   daily-limit: 5000.0    # max per player per day
 
 ------------
-
+Added Bank notes so the withdraw command for the wallet has a use
 
 
 

@@ -4,3 +4,6 @@ interest:
 
 withdraw:
   daily-limit: 5000.0    # max per player per day
+
+bank-notes:
+  enabled: true

@@ -9,6 +9,9 @@ import net.crewco.Treasury.commands.playerWalletCommands.walletCommand
 import net.crewco.Treasury.commands.pluginCommands.ReloadCommand
 import net.crewco.Treasury.hooks.VaultBankEconomy
 import net.crewco.Treasury.hooks.VaultEconomyProvider
+import net.crewco.Treasury.itemValue.bankNotes.BankNotes
+import net.crewco.Treasury.listeners.accountCreateListener
+import net.crewco.Treasury.listeners.bankNoteRedeem
 import net.crewco.Treasury.managers.AccountManager
 import net.crewco.Treasury.managers.AccountsDataBase
 import net.crewco.Treasury.managers.BankDatabase
@@ -45,6 +48,7 @@ class Startup : CrewCoPlugin() {
 		lateinit var accountsDataBase: AccountsDataBase
 		lateinit var messagesConfig: YamlConfiguration
 		lateinit var sysMsg:String
+		lateinit var bankNotes: BankNotes
 	}
 
 	private lateinit var econ: Economy;
@@ -60,6 +64,8 @@ class Startup : CrewCoPlugin() {
 
 		//Inits
 		plugin = this
+		sysMsg = ChatColor.translateAlternateColorCodes('&', "&7[&6Treasury&7]> ")
+		bankNotes = BankNotes(this)
 		// Init DataBases
 		dbManager = DatabaseManager(File(dataFolder,"economy.db"))
 		accountsDataBase = AccountsDataBase(File(dataFolder,"economy.db"))
@@ -110,7 +116,7 @@ class Startup : CrewCoPlugin() {
 		withdrawLimit = config.getDouble("withdraw.daily-limit")
 
 		registerCommands(walletCommand::class, BankCommand::class, BankAdminCommand::class,walletAdminCommand::class,BusinessCommand::class,BusinessAdminCommand::class,ReloadCommand::class)
-
+		registerListeners(accountCreateListener::class,bankNoteRedeem::class)
 
 		// Register Vault Hooks
 		val vaultProvider = VaultEconomyProvider(accountManager)
@@ -154,13 +160,11 @@ class Startup : CrewCoPlugin() {
 		saveConfig()
 		reloadConfig()
 
-		// If using additional configs like messages.yml
+		/* If using additional configs like messages.yml
 		val messagesFile = File(dataFolder, "messages.yml")
 		if (!messagesFile.exists()) saveResource("messages.yml", false)
-		messagesConfig = YamlConfiguration.loadConfiguration(messagesFile)
-
-		sysMsg = ChatColor.translateAlternateColorCodes('&', messagesConfig.getString("system-message")!!)
-
-		logger.info("Treasury config files reloaded.")
+		messagesConfig = YamlConfiguration.loadConfiguration(messagesFile)*/
+		logger.info("${sysMsg}Treasury config files reloaded.")
 	}
+
 }

@@ -11,7 +11,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 class accountCreateListener:Listener {
 	@EventHandler
 	fun onJoin(e:PlayerJoinEvent){
-		dbManager.createAccountIfMissing(e.player.uniqueId)
+		accountManager.createAccount(e.player.uniqueId)
 		bankManager.createBankAccount(e.player.uniqueId)
 	}
 }

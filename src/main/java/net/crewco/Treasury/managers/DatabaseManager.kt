@@ -1,5 +1,7 @@
 package net.crewco.Treasury.managers
 
+import net.crewco.Treasury.models.Account
+import net.crewco.Treasury.models.AccountType
 import java.io.File
 import java.sql.Connection
 import java.sql.DriverManager
@@ -127,4 +129,19 @@ class DatabaseManager(private val dbFile: File) {
 		stmt.setLong(2, System.currentTimeMillis())
 		stmt.executeUpdate()
 	}
+
+	fun getAccount(uuid: UUID): Account? {
+		val stmt = connection.prepareStatement("SELECT balance, account_type FROM accounts WHERE uuid = ?")
+		stmt.setString(1, uuid.toString())
+		val rs = stmt.executeQuery()
+
+		return if (rs.next()) {
+			val balance = rs.getDouble("balance")
+			val type = AccountType.valueOf(rs.getString("account_type"))
+			Account(uuid, balance, type)
+		} else {
+			null
+		}
+	}
+
 }

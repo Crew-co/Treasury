@@ -1,6 +1,7 @@
 package net.crewco.Treasury.commands.bankCommands
 
 import net.crewco.Treasury.Startup.Companion.bankManager
+import net.crewco.Treasury.Startup.Companion.bankNotes
 import net.crewco.Treasury.Startup.Companion.sysMsg
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -38,7 +39,21 @@ class BankAdminCommand {
 				account.balance = amount
 				player.sendMessage("${sysMsg}Set ${target.name}'s bank balance to §6$amount.")
 			}
-			else -> player.sendMessage("${sysMsg}/bankadmin <give|set|bal> <player> [amount]")
+
+			"note" -> {
+				val amount = args.getOrNull(1)?.toDoubleOrNull() ?: return player.error("Invalid amount.")
+				val target_note = Bukkit.getOfflinePlayer(args[2])
+				if (amount <= 0.0) {
+					player.sendMessage("§cAmount must be greater than 0.")
+					return
+				}
+
+				val note = bankNotes.createBankNote(amount, player)
+				player.inventory.addItem(note)
+				player.sendMessage("§aCreated a bank note worth $${"%.2f".format(amount)}")
+			}
+
+			else -> player.sendMessage("${sysMsg}/bankadmin <give|set|bal|note> <player> [amount]")
 		}
 		return
 	}
@@ -53,7 +68,7 @@ class BankAdminCommand {
 		context: CommandContext<Player>,
 		input: String
 	): Stream<String> {
-		val commandSuggestions = mutableListOf("bal","give","set")
+		val commandSuggestions = mutableListOf("bal","give","set","note")
 		return commandSuggestions.stream()
 	}
 }
