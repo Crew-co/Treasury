@@ -1,0 +1,58 @@
+package net.crewco.Treasury.commands.bankCommands
+
+import net.crewco.Treasury.Startup.Companion.bankManager
+import org.bukkit.Bukkit
+import org.bukkit.entity.Player
+import org.incendo.cloud.annotations.Argument
+import org.incendo.cloud.annotations.Command
+import org.incendo.cloud.annotations.Permission
+import org.incendo.cloud.annotations.suggestion.Suggestions
+import org.incendo.cloud.context.CommandContext
+import java.util.stream.Stream
+
+class BankAdminCommand {
+	@Command("bankAdmin <args>")
+	@Permission("treasury.bank.admin")
+	fun onExecute(player: Player, @Argument("args", suggestions = "args") args:Array<String>){
+		if (args.size <2){
+			player.sendMessage("§e/bankadmin <give|set|bal> <player> [amount]")
+			return
+		}
+
+		val target = Bukkit.getOfflinePlayer(args[1])
+		val uuid = target.uniqueId
+		val account = bankManager.getBankAccount(uuid)!!
+
+		when (args[0].lowercase()) {
+			"bal" -> {
+				player.sendMessage("§a${target.name}'s bank balance: §6$${"%.2f".format(account.balance)}")
+			}
+			"give" -> {
+				val amount = args.getOrNull(2)?.toDoubleOrNull() ?: return player.error("Invalid amount.")
+				account.balance += amount
+				player.sendMessage("§aGave §6$amount §ato ${target.name}'s bank.")
+			}
+			"set" -> {
+				val amount = args.getOrNull(2)?.toDoubleOrNull() ?: return player.error("Invalid amount.")
+				account.balance = amount
+				player.sendMessage("§aSet ${target.name}'s bank balance to §6$amount.")
+			}
+			else -> player.sendMessage("§e/bankadmin <give|set|bal> <player> [amount]")
+		}
+		return
+	}
+
+	private fun Player.error(msg: String) {
+		sendMessage("§c$msg")
+		return
+	}
+
+	@Suggestions("args")
+	fun containerSuggestions(
+		context: CommandContext<Player>,
+		input: String
+	): Stream<String> {
+		val commandSuggestions = mutableListOf("bal","give","set")
+		return commandSuggestions.stream()
+	}
+}

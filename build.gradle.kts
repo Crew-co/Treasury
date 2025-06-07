@@ -3,8 +3,8 @@ plugins {
 	id("org.jetbrains.kotlin.jvm") version "2.0.21"
 	id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
 	id("com.github.johnrengelman.shadow") version "7.1.2"
-	id("io.papermc.paperweight.userdev") version "1.7.4"
-	id("xyz.jpenilla.run-paper") version "2.0.0"
+	id("io.papermc.paperweight.userdev") version "1.7.7"
+	id("xyz.jpenilla.run-paper") version "2.3.1"
 }
 
 val paper_version: String by project
@@ -75,12 +75,17 @@ dependencies {
 	paperweight.paperDevBundle(paper_version)
 	compileOnly("io.papermc.paper:paper-api:$paper_version")
 
+	// Inventory FrameWork
+	implementation("com.github.stefvanschie.inventoryframework:IF:0.10.19")
 
 	//LuckPerms
 	compileOnly("net.luckperms:api:5.4")
 
 	//MySQL
 	implementation("mysql:mysql-connector-java:8.0.28")
+
+	// Vault API
+	compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.11")
 
 /*
 	// Kotlin
@@ -92,6 +97,8 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.7.3")
+	implementation("org.jetbrains.kotlin:kotlin-reflect")
+
 
 	// Kotlin Coroutine for Bukkit
 	implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.20.0")
@@ -165,5 +172,6 @@ bukkit {
 	version = project_version
 	authors = listOf("CrewCo Team", *project_owners.split(",").toTypedArray())
 	main = "$project_package.$project_plugin_class"
-	apiVersion = "1.20"
+	apiVersion = "1.21"
+	softDepend = mutableListOf("Vault")
 }
