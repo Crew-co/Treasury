@@ -4,12 +4,13 @@ import com.google.inject.Inject
 import net.crewco.Treasury.Startup
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
+import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 
 class BankNotes @Inject constructor(private val plugin:Startup){
-	fun createBankNote(amount: Double, issuer: Player): ItemStack {
+	fun createBankNote(amount: Double, issuer: OfflinePlayer): ItemStack {
 		val item = ItemStack(Material.PAPER)
 		val meta = item.itemMeta!!
 

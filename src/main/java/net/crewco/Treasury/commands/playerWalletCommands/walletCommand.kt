@@ -62,17 +62,21 @@ class walletCommand @Inject constructor(private val plugin:Startup) {
 					return
 				}
 
-				val withdrawnToday = accountManager.getWithdrawnToday(sender.uniqueId)
-				val cap = withdrawLimit
-				if (withdrawnToday + amount > cap) {
-					sender.sendMessage("${sysMsg}You've reached your daily withdraw limit of $cap.")
-					return
+				if (plugin.config.getBoolean("withdraw.enabled")) {
+					val withdrawnToday = accountManager.getWithdrawnToday(sender.uniqueId)
+					val cap = withdrawLimit
+					if (withdrawnToday + amount > cap) {
+						sender.sendMessage("${sysMsg}You've reached your daily withdraw limit of $cap.")
+						return
+					} else {
+						sender.sendMessage("${sysMsg}You have $withdrawnToday/$cap left of your withdraw limit")
+					}
 				}
 
 				if (accountManager.withdraw(sender.uniqueId, amount)) {
 					accountManager.addWithdrawnToday(sender.uniqueId, amount)
-					bankNotes.createBankNote(amount,sender)
 					sender.sendMessage("${sysMsg}Withdrew §6$${"%.2f".format(amount)}")
+					sender.inventory.addItem(bankNotes.createBankNote(amount,sender))
 				} else {
 					sender.sendMessage("${sysMsg}Insufficient balance.")
 				}

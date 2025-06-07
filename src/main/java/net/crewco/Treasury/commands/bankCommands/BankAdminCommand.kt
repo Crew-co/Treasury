@@ -23,32 +23,37 @@ class BankAdminCommand {
 
 		val target = Bukkit.getOfflinePlayer(args[1])
 		val uuid = target.uniqueId
-		val account = bankManager.getBankAccount(uuid)!!
+		val account = bankManager.getBankAccount(uuid)
 
 		when (args[0].lowercase()) {
 			"bal" -> {
-				player.sendMessage("${sysMsg}§a${target.name}'s bank balance: §6$${"%.2f".format(account.balance)}")
+				if (account != null) {
+					player.sendMessage("${sysMsg}§a${target.name}'s bank balance: §6$${"%.2f".format(account.balance)}")
+				}
 			}
-			"give" -> {
-				val amount = args.getOrNull(2)?.toDoubleOrNull() ?: return player.error("Invalid amount.")
-				account.balance += amount
-				player.sendMessage("${sysMsg}Gave §6$amount §ato ${target.name}'s bank.")
+			"give" -> if (account != null) {
+				run {
+					val amount = args.getOrNull(2)?.toDoubleOrNull() ?: return player.error("Invalid amount.")
+					account.balance += amount
+					player.sendMessage("${sysMsg}Gave §6$amount §ato ${target.name}'s bank.")
+				}
 			}
 			"set" -> {
 				val amount = args.getOrNull(2)?.toDoubleOrNull() ?: return player.error("Invalid amount.")
-				account.balance = amount
+				if (account != null) {
+					account.balance = amount
+				}
 				player.sendMessage("${sysMsg}Set ${target.name}'s bank balance to §6$amount.")
 			}
 
 			"note" -> {
 				val amount = args.getOrNull(1)?.toDoubleOrNull() ?: return player.error("Invalid amount.")
-				val target_note = Bukkit.getOfflinePlayer(args[2])
 				if (amount <= 0.0) {
 					player.sendMessage("§cAmount must be greater than 0.")
 					return
 				}
 
-				val note = bankNotes.createBankNote(amount, player)
+				val note = bankNotes.createBankNote(amount, target)
 				player.inventory.addItem(note)
 				player.sendMessage("§aCreated a bank note worth $${"%.2f".format(amount)}")
 			}

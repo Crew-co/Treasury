@@ -49,11 +49,16 @@ Yaml Configuration for IntrestRate and withdraw limit
 ------------
 
 interest:
-  business-rate: 1.5     # percent
-  business-cap: 10000.0  # max daily gain per business
+business-rate: 1.5 # percent
+business-cap: 10000.0 # max daily gain per business
 
 withdraw:
-  daily-limit: 5000.0    # max per player per day
+daily-limit: 5000.0 # max per player per day
+enabled: true
+
+bank-notes:
+enabled: true
+
 
 ------------
 Added Bank notes so the withdraw command for the wallet has a use

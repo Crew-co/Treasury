@@ -46,7 +46,6 @@ class Startup : CrewCoPlugin() {
 		var interestCap by Delegates.notNull<Double>()
 		var withdrawLimit by Delegates.notNull<Double>()
 		lateinit var accountsDataBase: AccountsDataBase
-		lateinit var messagesConfig: YamlConfiguration
 		lateinit var sysMsg:String
 		lateinit var bankNotes: BankNotes
 	}
