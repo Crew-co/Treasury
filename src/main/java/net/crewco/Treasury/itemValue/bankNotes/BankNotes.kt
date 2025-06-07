@@ -27,4 +27,22 @@ class BankNotes @Inject constructor(private val plugin:Startup){
 		item.itemMeta = meta
 		return item
 	}
+
+	fun createBankNoteBusiness(amount: Double, issuer: String): ItemStack {
+		val item = ItemStack(Material.PAPER)
+		val meta = item.itemMeta!!
+
+		meta.setDisplayName("§6Business Bank Note")
+		meta.lore = listOf(
+			"§7Value: §a$${"%.2f".format(amount)}",
+			"§7Issued by: §e${issuer}",
+			"§8Right-click to redeem"
+		)
+
+		val key = NamespacedKey(plugin, "banknote_value_business")
+		meta.persistentDataContainer.set(key, PersistentDataType.DOUBLE, amount)
+
+		item.itemMeta = meta
+		return item
+	}
 }

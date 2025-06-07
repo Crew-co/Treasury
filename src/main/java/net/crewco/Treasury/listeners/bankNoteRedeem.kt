@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import net.crewco.Treasury.Startup
 import net.crewco.Treasury.Startup.Companion.accountManager
 import net.crewco.Treasury.Startup.Companion.bankManager
+import net.crewco.Treasury.Startup.Companion.businessManager
 import net.crewco.Treasury.Startup.Companion.sysMsg
 import net.minecraft.network.chat.HoverEvent
 import org.bukkit.Material
@@ -51,6 +52,55 @@ class bankNoteRedeem @Inject constructor(private val plugin:Startup):Listener {
 
 		wallet.deposit(player.uniqueId, amount = value)
 		player.sendMessage("${sysMsg}Successfully redeemed a bank note worth $${"%.2f".format(value)}!")
+
+		// Consume one item
+		val updated = item.clone()
+		updated.amount -= 1
+
+		if (updated.amount <= 0) {
+			player.inventory.remove(item)
+		} else {
+			player.inventory.setItem(player.inventory.heldItemSlot, updated)
+		}
+
+		player.updateInventory() // Sync just in case
+	}
+	@EventHandler
+	fun onBankNoteRedeemBusiness(event: PlayerInteractEvent) {
+		val player = event.player
+		val item = event.item ?: return
+		if (item.type != Material.PAPER) return
+		if (event.action != Action.RIGHT_CLICK_AIR && event.action != Action.RIGHT_CLICK_BLOCK) return
+		if (!item.hasItemMeta()) return
+
+		val meta = item.itemMeta ?: return
+
+		// Check display name
+		if (!meta.hasDisplayName() || meta.displayName != "§6Business Bank Note") return
+
+		// Check if lore contains the expected text
+		if (!meta.hasLore() || meta.lore?.none { it.contains("Value") } != false) return
+
+		// Try to read banknote value from PersistentDataContainer
+		val key = NamespacedKey(plugin, "banknote_value_business")
+		val value = meta.persistentDataContainer.get(key, PersistentDataType.DOUBLE)
+
+		if (value == null || value <= 0.0) {
+			player.sendMessage("§cInvalid or corrupted bank note.")
+			return
+		}
+
+		event.isCancelled = true
+
+		// Credit to player’s bank account
+		val business = businessManager
+		if (business.getBusinessByOwner(player.uniqueId) == null) {
+			player.sendMessage("${sysMsg}Could not find your business bank account.")
+			return
+		}
+
+		businessManager.deposit(business.getBusinessByOwner(player.uniqueId)!!.id,value)
+		player.sendMessage("${sysMsg}Successfully redeemed a business bank note worth $${"%.2f".format(value)}!")
 
 		// Consume one item
 		val updated = item.clone()

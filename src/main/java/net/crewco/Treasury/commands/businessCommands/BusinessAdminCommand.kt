@@ -32,40 +32,44 @@ class BusinessAdminCommand @Inject constructor(private val plugin:Startup) {
 			}
 
 			"set-balance" -> {
-				val id = args.getOrNull(1)
+				val name = args.getOrNull(1)
+				val id = name?.let { businessManager.getBusinessByName(it)?.id }
 				val amount = args.getOrNull(2)?.toDoubleOrNull()
 				val business = businessManager.getBusiness(id ?: "")
 				if (business != null && amount != null) {
 					business.balance = amount
 					player.sendMessage("${sysMsg}Balance for '$id' set to $amount")
-				} else player.sendMessage("${sysMsg}Usage: /businessadmin setbalance <id> <amount>")
+				} else player.sendMessage("${sysMsg}Usage: /businessadmin setbalance <name> <amount>")
 			}
 
 			"addmember" -> {
-				val id = args.getOrNull(1)
+				val name = args.getOrNull(1)
+				val id = name?.let { businessManager.getBusinessByName(it)?.id }
 				val player = args.getOrNull(2)?.let { Bukkit.getOfflinePlayer(it).uniqueId }
 				if (id != null && player != null && businessManager.addMember(id, player)) {
 					Bukkit.getPlayer(player)?.sendMessage("${sysMsg}Added member to $id")
 				} else player?.let {
-					Bukkit.getPlayer(it)?.sendMessage("${sysMsg}Usage: /businessadmin addmember <id> <player>")
+					Bukkit.getPlayer(it)?.sendMessage("${sysMsg}Usage: /businessadmin addmember <name> <player>")
 				}
 			}
 
 			"removemember" -> {
-				val id = args.getOrNull(1)
+				val name = args.getOrNull(1)
+				val id = name?.let { businessManager.getBusinessByName(it)?.id }
 				val player = args.getOrNull(2)?.let { Bukkit.getOfflinePlayer(it).uniqueId }
 				if (id != null && player != null && businessManager.removeMember(id, player)) {
 					Bukkit.getPlayer(player)?.sendMessage("${sysMsg}Removed member from $id")
 				} else player?.let {
-					Bukkit.getPlayer(it)?.sendMessage("${sysMsg}Usage: /businessadmin removemember <id> <player>")
+					Bukkit.getPlayer(it)?.sendMessage("${sysMsg}Usage: /businessadmin removemember <name> <player>")
 				}
 			}
 
 			"delete" -> {
-				val id = args.getOrNull(1)
+				val name = args.getOrNull(1)
+				val id = name?.let { businessManager.getBusinessByName(it)?.id }
 				if (id != null && businessManager.deleteBusiness(id)) {
-					player.sendMessage("${sysMsg}Business '$id' deleted.")
-				} else player.sendMessage("${sysMsg}Business ID not found.")
+					player.sendMessage("${sysMsg}Business '$name' deleted.")
+				} else player.sendMessage("${sysMsg}Business $name not found.")
 			}
 
 			else -> player.sendMessage("${sysMsg}/businessadmin create|set-balance|addmember|removemember|delete ...")

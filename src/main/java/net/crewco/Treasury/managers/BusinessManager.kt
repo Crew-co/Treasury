@@ -7,19 +7,19 @@ import kotlin.random.Random
 
 class BusinessManager(private val businessdb: BusinessDatabase) {
 
-
+	private val businesses = mutableMapOf<String, Business>()
 
 	fun load() {
 		for (biz in businessdb.loadBusinesses()) {
 			businesses[biz.id] = biz
 		}
+		println("DEBUG-LOAD:${businesses.values}")
 	}
 
 	fun save() {
 		businessdb.saveBusinesses(businesses.values.toList())
+		println("DEBUG-SAVE: ${businesses.values.toList()}")
 	}
-
-	private val businesses = mutableMapOf<String, Business>()
 
 	fun createBusiness(id: String, name: String, owner: UUID): Boolean {
 		if (businesses.containsKey(id)) return false
@@ -84,6 +84,22 @@ class BusinessManager(private val businessdb: BusinessDatabase) {
 
 	fun getName(id: String): String? {
 		return businesses[id]?.name
+	}
+
+	fun getBusinessByOwner(owner: UUID): Business? {
+		return businesses.values.firstOrNull { it.owner == owner }
+	}
+
+	fun getBusinessByName(name: String): Business? {
+		return businesses.values.firstOrNull { it.name.equals(name, ignoreCase = true) }
+	}
+
+	fun getBusinessByMember(member: UUID): Business?{
+		return businesses.values.firstOrNull { it.members.contains(member) }
+	}
+
+	fun getBusinessesByMember(member: UUID): List<Business> {
+		return businesses.values.filter { it.members.contains(member) }
 	}
 
 

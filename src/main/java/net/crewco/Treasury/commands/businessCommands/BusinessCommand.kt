@@ -1,7 +1,11 @@
 package net.crewco.Treasury.commands.businessCommands
 
+import com.google.inject.Inject
+import net.crewco.Treasury.Startup
 import net.crewco.Treasury.Startup.Companion.bankManager
+import net.crewco.Treasury.Startup.Companion.bankNotes
 import net.crewco.Treasury.Startup.Companion.businessManager
+import net.crewco.Treasury.Startup.Companion.sysMsg
 import net.crewco.Treasury.Startup.Companion.withdrawLimit
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -12,7 +16,7 @@ import org.incendo.cloud.annotations.suggestion.Suggestions
 import org.incendo.cloud.context.CommandContext
 import java.util.stream.Stream
 
-class BusinessCommand {
+class BusinessCommand @Inject constructor(private val plugin:Startup) {
 	@Command("business <args>")
 	@Permission("treasury.business.use")
 	fun onExecute(player:Player, @Argument("args", suggestions = "args") args:Array<String>){
@@ -20,18 +24,18 @@ class BusinessCommand {
 		when (args.getOrNull(0)?.lowercase()) {
 
 			"create" -> {
-				val name = args.getOrNull(0)
+				val name = args.getOrNull(1)
 				val target = player.uniqueId
 
 				if (name == null) {
-					player.sendMessage("§cUsage: /business create <name>")
+					player.sendMessage("${sysMsg}Usage: /business create <name>")
 					return
 				}
 
 				// Check if player already owns a business
 				val ownsBusiness = businessManager.getAll().any { it.owner == target }
 				if (ownsBusiness) {
-					player.sendMessage("§cYou already own a business and cannot create another.")
+					player.sendMessage("${sysMsg}You already own a business and cannot create another.")
 					return
 				}
 
@@ -39,117 +43,122 @@ class BusinessCommand {
 				val id = businessManager.generateBusinessId()
 
 				if (businessManager.createBusiness(id, name, target)) {
-					player.sendMessage("§aBusiness '$id' created with owner $target")
+					player.sendMessage("${sysMsg}Business '$name' created with owner ${Bukkit.getOfflinePlayer(target).name}")
 				} else {
-					player.sendMessage("§cA business with this ID or name already exists.")
+					player.sendMessage("${sysMsg}A business with this ID or name already exists.")
 				}
 			}
 
 			"delete" -> {
-				val id = args.getOrNull(1)
+				val name = args.getOrNull(1)?: businessManager.getBusinessByMember(player.uniqueId)?.name
+				val id = name?.let { businessManager.getBusinessByName(it)?.id }
 				if (id == null) {
-					player.sendMessage("§cPlease specify a business ID to delete.")
+					player.sendMessage("${sysMsg}Please specify a business ID to delete.")
 					return
 				}
 
 				val business = businessManager.getBusiness(id)
 				if (business == null) {
-					player.sendMessage("§cBusiness ID '$id' not found.")
+					player.sendMessage("${sysMsg}Business name '$name' not found.")
 					return
 				}
 
 				if (business.owner != player.uniqueId) {
-					player.sendMessage("§cOnly the owner can delete this business.")
+					player.sendMessage("${sysMsg}Only the owner can delete this business.")
 					return
 				}
 
 				if (businessManager.deleteBusiness(id)) {
-					player.sendMessage("§cBusiness '$id' deleted.")
+					player.sendMessage("${sysMsg}Business '$id' deleted.")
 				} else {
-					player.sendMessage("§cFailed to delete business '$id'.")
+					player.sendMessage("${sysMsg}Failed to delete business '$id'.")
 				}
 			}
 
 			"hire" -> {
-				val id = args.getOrNull(1)
+				val name = args.getOrNull(1)?: businessManager.getBusinessByMember(player.uniqueId)?.name
+				val id = name?.let { businessManager.getBusinessByName(it)?.id }
 				val memberName = args.getOrNull(2)
 				if (id == null || memberName == null) {
-					player.sendMessage("§cUsage: /business addmember <id> <player>")
+					player.sendMessage("${sysMsg}Usage: /business addmember <name> <player>")
 					return
 				}
 
 				val business = businessManager.getBusiness(id)
 				if (business == null) {
-					player.sendMessage("§cBusiness ID '$id' not found.")
+					player.sendMessage("${sysMsg}Business '$name' not found.")
 					return
 				}
 
 				// Only owner can add members
 				if (business.owner != player.uniqueId) {
-					player.sendMessage("§cOnly the owner can add members.")
+					player.sendMessage("${sysMsg}Only the owner can add members.")
 					return
 				}
 
 				val member = Bukkit.getOfflinePlayer(memberName).uniqueId
 
 				if (business.members.contains(member)) {
-					player.sendMessage("§cThat player is already a member.")
+					player.sendMessage("${sysMsg}That player is already a member.")
 					return
 				}
 
 				if (businessManager.addMember(id, member)) {
-					player.sendMessage("§aPlayer $memberName added to business '$id'.")
-					Bukkit.getPlayer(member)?.sendMessage("§aYou were added to the business '${business.name}'.")
+					player.sendMessage("${sysMsg}Player $memberName added to business '$id'.")
+					Bukkit.getPlayer(member)?.sendMessage("${sysMsg}You were added to the business '${business.name}'.")
 				} else {
-					player.sendMessage("§cFailed to add member.")
+					player.sendMessage("${sysMsg}Failed to add member.")
 				}
 			}
 
 			"fire" -> {
-				val id = args.getOrNull(1)
+				val name = args.getOrNull(1)?: businessManager.getBusinessByMember(player.uniqueId)?.name
+				val id = name?.let { businessManager.getBusinessByName(it)?.id }
 				val memberName = args.getOrNull(2)
 				if (id == null || memberName == null) {
-					player.sendMessage("§cUsage: /business fire <id> <player>")
+					player.sendMessage("${sysMsg}Usage: /business fire <name> <player>")
 					return
 				}
 
 				val business = businessManager.getBusiness(id)
 				if (business == null) {
-					player.sendMessage("§cBusiness ID '$id' not found.")
+					player.sendMessage("${sysMsg}Business '$name' not found.")
 					return
 				}
 
 				// Only owner can remove members
 				if (business.owner != player.uniqueId) {
-					player.sendMessage("§cOnly the owner can remove members.")
+					player.sendMessage("${sysMsg}Only the owner can remove members.")
 					return
 				}
 
 				val member = Bukkit.getOfflinePlayer(memberName).uniqueId
 
 				if (!business.members.contains(member)) {
-					player.sendMessage("§cThat player is not a member.")
+					player.sendMessage("${sysMsg}That player is not a member.")
 					return
 				}
 
 				// Prevent owner from removing themselves
 				if (business.owner == member) {
-					player.sendMessage("§cYou cannot remove yourself as owner.")
+					player.sendMessage("${sysMsg}You cannot remove yourself as owner.")
 					return
 				}
 
 				if (businessManager.removeMember(id, member)) {
-					player.sendMessage("§aPlayer $memberName removed from business '$id'.")
-					Bukkit.getPlayer(member)?.sendMessage("§cYou were removed from the business '${business.name}'.")
+					player.sendMessage("${sysMsg}Player $memberName removed from business '$id'.")
+					Bukkit.getPlayer(member)?.sendMessage("${sysMsg}You were removed from the business '${business.name}'.")
 				} else {
-					player.sendMessage("§cFailed to remove member.")
+					player.sendMessage("${sysMsg}Failed to remove member.")
 				}
 			}
 
 			"info" -> {
-				val id = args.getOrNull(1)
+				player.sendMessage("${sysMsg}Business Info:")
+				val name = args.getOrNull(1)?: businessManager.getBusinessByMember(player.uniqueId)?.name
+				val id = name?.let { businessManager.getBusinessByName(it)?.id }
 				val biz = businessManager.getBusiness(id ?: "")
-				if (biz != null && biz.members.contains(player.uniqueId)) {
+				if (biz != null && biz.members.contains(player.uniqueId) || biz != null && biz.owner == player.uniqueId) {
 					player.sendMessage("§6Business: §e${biz.name}")
 					player.sendMessage("§7Owner: §f${Bukkit.getOfflinePlayer(biz.owner).name}")
 					player.sendMessage("§7Members: §f${biz.members.map { Bukkit.getOfflinePlayer(it).name }.joinToString(", ")}")
@@ -166,9 +175,9 @@ class BusinessCommand {
 			"list" -> {
 				val businesses = businessManager.getAll()
 				if (businesses.isEmpty()) {
-					player.sendMessage("§cThere are no businesses.")
+					player.sendMessage("${sysMsg}There are no businesses.")
 				} else {
-					player.sendMessage("§6Businesses:")
+					player.sendMessage("${sysMsg}Businesses:")
 					businesses.forEach {
 						player.sendMessage(" §e${it.id}§7: §f${it.name} (§a$${it.balance}§f)")
 					}
@@ -176,7 +185,8 @@ class BusinessCommand {
 			}
 
 			"deposit" -> {
-				val id = args.getOrNull(1)
+				val name = args.getOrNull(1)?: businessManager.getBusinessByMember(player.uniqueId)?.name
+				val id = name?.let { businessManager.getBusinessByName(it)?.id }
 				val amount = args.getOrNull(2)?.toDoubleOrNull()
 				val biz = businessManager.getBusiness(id ?: "")
 				val bank = bankManager.getBankAccount(player.uniqueId)
@@ -186,48 +196,45 @@ class BusinessCommand {
 							bank.balance -= amount
 							biz.balance += amount
 							biz.transactions.add("${player.name} deposited $$amount")
-							player.sendMessage("§aDeposited $$amount into ${biz.name}")
+							player.sendMessage("${sysMsg}Deposited $$amount into ${biz.name}")
 						} else {
 							player.sendMessage("§cNot enough funds.")
 						}
 					}
 				} else {
-					player.sendMessage("§cUsage: /business deposit <id> <amount>")
+					player.sendMessage("${sysMsg}Usage: /business deposit <name> <amount>")
 				}
 			}
 
 			"withdraw" -> {
-				val id = args.getOrNull(1)
+				val name = args.getOrNull(1)?: businessManager.getBusinessByMember(player.uniqueId)?.name
+				val id = name?.let { businessManager.getBusinessByName(it)?.id }
 				val amount = args.getOrNull(2)?.toDoubleOrNull()
 				val biz = businessManager.getBusiness(id ?: "")
-				val bank = bankManager.getBankAccount(player.uniqueId)
 				if (biz != null && amount != null && amount > 0 && biz.members.contains(player.uniqueId)) {
-					if (biz.balance >= amount) if (bank != null) {
+					if (biz.balance >= amount) {
 						run {
-							if (bank.dailyWithdrawn + amount > withdrawLimit) {
-								player.sendMessage("§cYou've reached your daily withdraw limit of $${withdrawLimit}")
-								return
-							}
 							biz.balance -= amount
-							bank.balance += amount
 							biz.transactions.add("${player.name} withdrew $$amount")
-							player.sendMessage("§aWithdrew $$amount from ${biz.name}")
+							player.inventory.addItem(bankNotes.createBankNoteBusiness(amount,biz.name))
+							player.sendMessage("${sysMsg}Withdrew $$amount from ${biz.name}")
 						}
 					} else {
-						player.sendMessage("§cBusiness doesn't have enough.")
+						player.sendMessage("${sysMsg}Business doesn't have enough.")
 					}
 				} else {
-					player.sendMessage("§cUsage: /business withdraw <id> <amount>")
+					player.sendMessage("${sysMsg}Usage: /business withdraw <name> <amount>")
 				}
 			}
 
 			else -> {
-				player.sendMessage("§e/business info <id>")
+				player.sendMessage("${sysMsg}Business Help")
+				player.sendMessage("§e/business info <name>")
 				player.sendMessage("§e/business list")
-				player.sendMessage("§e/business deposit <id> <amount>")
-				player.sendMessage("§e/business withdraw <id> <amount>")
-				player.sendMessage("§e/business hire/fire <id> <player>")
-				player.sendMessage("§e/business delete <id>")
+				player.sendMessage("§e/business deposit <name> <amount>")
+				player.sendMessage("§e/business withdraw <name> <amount>")
+				player.sendMessage("§e/business hire/fire <name> <player>")
+				player.sendMessage("§e/business delete <name>")
 			}
 		}
 
@@ -239,7 +246,7 @@ class BusinessCommand {
 		context: CommandContext<Player>,
 		input: String
 	): Stream<String> {
-		val commandSuggestions = mutableListOf("info","list","deposit","withdraw","delete","hire","fire")
+		val commandSuggestions = mutableListOf("create","info","list","deposit","withdraw","delete","hire","fire")
 		return commandSuggestions.stream()
 	}
 }

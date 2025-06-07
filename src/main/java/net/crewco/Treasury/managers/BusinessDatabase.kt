@@ -36,13 +36,14 @@ class BusinessDatabase(private val dbFile: File) {
 
 	fun saveBusinesses(list: List<Business>) {
 		val sql = """
-            INSERT INTO businesses (id, name, owner, members, balance)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO businesses (id, name, owner, members, balance,transactions)
+            VALUES (?, ?, ?, ?, ?, ?)
             ON CONFLICT(id) DO UPDATE SET
                 name=excluded.name,
                 owner=excluded.owner,
                 members=excluded.members,
                 balance=excluded.balance;
+				transactions=excluded.transactions;
         """.trimIndent()
 
 		connection.prepareStatement(sql).use { stmt ->
@@ -52,8 +53,8 @@ class BusinessDatabase(private val dbFile: File) {
 				stmt.setString(3, biz.owner.toString())
 				stmt.setString(4, biz.members.joinToString(",") { it.toString() })
 				stmt.setDouble(5, biz.balance)
-				stmt.addBatch()
 				stmt.setString(6, biz.transactions.joinToString("|"))
+				stmt.addBatch()
 			}
 			stmt.executeBatch()
 		}

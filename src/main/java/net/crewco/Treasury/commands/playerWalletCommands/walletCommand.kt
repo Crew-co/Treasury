@@ -41,7 +41,9 @@ class walletCommand @Inject constructor(private val plugin:Startup) {
 				sender.sendMessage("${sysMsg}Your wallet balance: §6$${"%.2f".format(balance)}")
 			}
 
-			/*"deposit" -> {
+			"deposit" -> {
+				sender.sendMessage("${sysMsg}This Command is Disabled until further notice")
+				/*
 				val amount = args.getOrNull(1)?.toDoubleOrNull()
 				if (amount == null || amount <= 0) {
 					sender.sendMessage("${sysMsg}Usage: /wallet deposit <amount>")
@@ -49,7 +51,9 @@ class walletCommand @Inject constructor(private val plugin:Startup) {
 				}
 				accountManager.deposit(sender.uniqueId, amount)
 				sender.sendMessage("${sysMsg}Deposited §6$${"%.2f".format(amount)}")
-			}*/
+				*/
+
+			}
 
 			"withdraw" -> {
 				if (!plugin.config.getBoolean("bank-notes.enabled")){
