@@ -1,5 +1,6 @@
 package net.crewco.Treasury.managers
 
+import net.crewco.Treasury.models.AccountType
 import java.io.File
 import java.sql.Connection
 import java.sql.DriverManager
@@ -77,7 +78,7 @@ class BusinessDatabase(private val dbFile: File) {
 				val balance = rs.getDouble("balance")
 				val transactions = rs.getString("transactions")?.split("|")?.toMutableList() ?: mutableListOf()
 
-				list.add(Business(id, name, owner, members, balance,transactions))
+				list.add(Business(id, name, owner,AccountType.SHARED,members, balance,transactions))
 			}
 		}
 		return list

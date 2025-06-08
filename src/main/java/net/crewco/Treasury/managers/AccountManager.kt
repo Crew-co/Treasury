@@ -21,8 +21,8 @@ class AccountManager(private val databaseManager: DatabaseManager) {
 		}
 	}
 
-	fun deposit(uuid: UUID, amount: Double) {
-		databaseManager.deposit(uuid, amount)
+	fun deposit(uuid: UUID, amount: Double): Boolean {
+		return databaseManager.deposit(uuid, amount)
 	}
 
 	fun withdraw(uuid: UUID, amount: Double): Boolean {
@@ -44,4 +44,5 @@ class AccountManager(private val databaseManager: DatabaseManager) {
 	fun getAccount(uuid:UUID): Account? {
 		return databaseManager.getAccount(uuid)
 	}
+
 }

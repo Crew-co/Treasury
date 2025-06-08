@@ -7,6 +7,8 @@ import net.crewco.Treasury.Startup.Companion.bankNotes
 import net.crewco.Treasury.Startup.Companion.econManager
 import net.crewco.Treasury.Startup.Companion.sysMsg
 import net.crewco.Treasury.Startup.Companion.withdrawLimit
+import net.crewco.Treasury.models.AccountType
+import net.crewco.Treasury.models.TransactionType
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.incendo.cloud.annotations.Argument
@@ -31,8 +33,14 @@ class walletCommand @Inject constructor(private val plugin:Startup) {
 			"pay" ->{
 				if (args.size == 3){
 					val amount = args.getOrNull(2)?.toDoubleOrNull()
-					val target = Bukkit.getOfflinePlayer(args[1])
-					econManager.transfer(sender.uniqueId,target.uniqueId,amount!!)
+					val target = Bukkit.getPlayer(args[1])
+					if (target != null) {
+						econManager.transfer(sender.uniqueId,target.uniqueId,amount!!, accountType = AccountType.PLAYER, transactionType = TransactionType.TRANSFER)
+					}
+					if (target != null) {
+						sender.sendMessage("${sysMsg}Transferred $$amount to ${target.name}")
+					}
+					target?.sendMessage("${sysMsg}Received $$amount from ${sender.name}")
 				}
 			}
 

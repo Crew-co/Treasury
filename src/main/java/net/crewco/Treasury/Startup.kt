@@ -2,6 +2,7 @@ package net.crewco.Treasury
 
 import net.crewco.Treasury.commands.bankCommands.BankAdminCommand
 import net.crewco.Treasury.commands.bankCommands.BankCommand
+import net.crewco.Treasury.commands.bankCommands.CheckCommand
 import net.crewco.Treasury.commands.businessCommands.BusinessAdminCommand
 import net.crewco.Treasury.commands.businessCommands.BusinessCommand
 import net.crewco.Treasury.commands.playerWalletCommands.walletAdminCommand
@@ -12,6 +13,7 @@ import net.crewco.Treasury.hooks.VaultEconomyProvider
 import net.crewco.Treasury.itemValue.bankNotes.BankNotes
 import net.crewco.Treasury.listeners.accountCreateListener
 import net.crewco.Treasury.listeners.bankNoteRedeem
+import net.crewco.Treasury.listeners.checkRedeemListener
 import net.crewco.Treasury.managers.AccountManager
 import net.crewco.Treasury.managers.AccountsDataBase
 import net.crewco.Treasury.managers.BankDatabase
@@ -20,6 +22,8 @@ import net.crewco.Treasury.managers.BusinessDatabase
 import net.crewco.Treasury.managers.BusinessManager
 import net.crewco.Treasury.managers.DatabaseManager
 import net.crewco.Treasury.managers.EconomyManager
+import net.crewco.Treasury.managers.ServerAccountManager
+import net.crewco.Treasury.models.Transaction
 import net.crewco.Treasury.task.InterestAndLimitTask
 import net.crewco.common.CrewCoPlugin
 import net.milkbowl.vault2.economy.Economy
@@ -39,13 +43,14 @@ class Startup : CrewCoPlugin() {
 		lateinit var accountManager: AccountManager
 		lateinit var econManager: EconomyManager
 		lateinit var bankManager: BankManager
+		lateinit var businessManager: BusinessManager
+		lateinit var serverAccountManager: ServerAccountManager
 		lateinit var bankDatabase: BankDatabase
 		lateinit var businessdb:BusinessDatabase
-		lateinit var businessManager: BusinessManager
+		lateinit var accountsDataBase: AccountsDataBase
 		var interestRate by Delegates.notNull<Double>()
 		var interestCap by Delegates.notNull<Double>()
 		var withdrawLimit by Delegates.notNull<Double>()
-		lateinit var accountsDataBase: AccountsDataBase
 		lateinit var sysMsg:String
 		lateinit var bankNotes: BankNotes
 	}
@@ -88,6 +93,9 @@ class Startup : CrewCoPlugin() {
 		businessManager = BusinessManager(businessdb)
 		businessManager.load()
 
+		// Server Account Manager
+		serverAccountManager = ServerAccountManager()
+
 		// Optional: save periodically
 		server.scheduler.runTaskTimer(this, Runnable {
 			bankManager.save()
@@ -114,8 +122,8 @@ class Startup : CrewCoPlugin() {
 		interestCap = config.getDouble("interest.business-cap")
 		withdrawLimit = config.getDouble("withdraw.daily-limit")
 
-		registerCommands(walletCommand::class, BankCommand::class, BankAdminCommand::class,walletAdminCommand::class,BusinessCommand::class,BusinessAdminCommand::class,ReloadCommand::class)
-		registerListeners(accountCreateListener::class,bankNoteRedeem::class)
+		registerCommands(walletCommand::class, BankCommand::class, BankAdminCommand::class,walletAdminCommand::class,BusinessCommand::class,BusinessAdminCommand::class,ReloadCommand::class,CheckCommand::class)
+		registerListeners(accountCreateListener::class,bankNoteRedeem::class,checkRedeemListener::class)
 
 		// Register Vault Hooks
 		val vaultProvider = VaultEconomyProvider(accountManager)

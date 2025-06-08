@@ -11,6 +11,7 @@ data class BankAccount(
 	var lastInterestTimestamp: Long = 0L,   // NEW
 
 	var dailyWithdrawn: Double = 0.0,
-	var lastWithdrawReset: Long = 0L
+	var lastWithdrawReset: Long = 0L,
+	val accountType: AccountType = AccountType.BANK
 
 )

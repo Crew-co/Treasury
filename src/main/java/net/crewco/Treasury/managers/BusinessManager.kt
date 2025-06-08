@@ -1,5 +1,6 @@
 package net.crewco.Treasury.managers
 
+import net.crewco.Treasury.models.AccountType
 import net.crewco.Treasury.models.Business
 import java.util.*
 import kotlin.random.Random
@@ -13,12 +14,10 @@ class BusinessManager(private val businessdb: BusinessDatabase) {
 		for (biz in businessdb.loadBusinesses()) {
 			businesses[biz.id] = biz
 		}
-		println("DEBUG-LOAD:${businesses.values}")
 	}
 
 	fun save() {
 		businessdb.saveBusinesses(businesses.values.toList())
-		println("DEBUG-SAVE: ${businesses.values.toList()}")
 	}
 
 	fun createBusiness(id: String, name: String, owner: UUID): Boolean {
@@ -27,7 +26,7 @@ class BusinessManager(private val businessdb: BusinessDatabase) {
 		if (businesses.values.any { it.name.equals(name, ignoreCase = true) }) {
 			return false // Indicate failure because name is already taken
 		}
-		businesses[id] = Business(id, name, owner, mutableSetOf(owner), 0.0)
+		businesses[id] = Business(id, name, owner, AccountType.SHARED,mutableSetOf(owner), 0.0)
 		return true
 	}
 

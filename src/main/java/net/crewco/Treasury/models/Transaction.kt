@@ -7,10 +7,7 @@ data class Transaction(
 	val sender: UUID?,
 	val receiver: UUID?,
 	val amount: Double,
-	val type: TransactionType,
+	val transactionType: TransactionType,
+	val accountType: AccountType,
 	val timestamp: Long = System.currentTimeMillis()
 )
-
-enum class TransactionType {
-	DEPOSIT, WITHDRAW, TRANSFER, TAX, INTEREST
-}
