@@ -127,8 +127,8 @@ dependencies {
 	implementation("net.kyori:adventure-extra-kotlin:4.12.0")
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_22
-java.targetCompatibility = JavaVersion.VERSION_22
+java.sourceCompatibility = JavaVersion.VERSION_21
+java.targetCompatibility = JavaVersion.VERSION_21
 
 tasks {
 	assemble {
@@ -148,7 +148,7 @@ tasks {
 
 	compileKotlin {
 		kotlinOptions {
-			jvmTarget = "22"
+			jvmTarget = "21"
 		}
 	}
 
